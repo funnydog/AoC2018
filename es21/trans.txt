@@ -1,0 +1,32 @@
+  ip = reg[5]
+  0: r2 = 123
+  1: r2 = r2 & 456
+  2: if r2 == 72
+  3:   skip 1instr
+  4: goto 1
+  5: r2 = 0              ; r2 = 0
+  6: r1 = r2 | 0x100     ; do { r1 = r2 | 0x10000;
+  7: r2 = 1250634        ;   r2 = 1250634;
+  8: r4 = r1 & 0xFF      ;   loop { r4 = r1 & 0xFF;
+  9: r2 = r2 + r4        ;     r2 += r4;          -- r2 += r4
+ 10: r2 = r2 & 0xFFFFFF  ;     r2 &= 0xFFFFFF;    -- r2 &= 0xFFFFFF
+ 11: r2 = r2 * 65899     ;     r2 *= 65899        -- r2 = r2 << 16 + r2 * 22
+ 12: r2 = r2 & 0xFFFFFF  ;     r2 &= 0xFFFFFF;    -- r2 &= 0xFFFFFF
+ 13: if 256 > r1         ;     if (r1 < 256)
+ 14:   skip 1 instr      ;       break;
+ 15: skip 1 instr        ;
+ 16: jump 28             ;
+ 17: r4 = 0              ;     r4 = 0;
+ 18: r3 = r4 + 1         ;     while ((r4+1)*256 <= r1) {
+ 19: r3 = r3 * 256       ;
+ 20: if r3 > r1:         ;
+ 21:   skip 1 inst       ;
+ 22: skip 1 inst         ;
+ 23: jump 26             ;
+ 24: r4 = r4 + 1         ;       r4++;
+ 25: jump 18             ;     }
+ 26: r1 = r4             ;     r1 = r4;
+ 27: jump 8              ;   }
+ 28: if r2 == r0         ;
+ 29:  skip 1 inst        ;
+ 30: jump 6              ; } while (r2 != r0)
