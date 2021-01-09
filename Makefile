@@ -1,4 +1,4 @@
-SUBDIRS = $(wildcard es*)
+SUBDIRS = $(wildcard day*)
 
 .PHONY: all clean
 
