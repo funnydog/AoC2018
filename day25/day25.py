@@ -9,25 +9,14 @@ class Point(object):
         self.rank = 0
 
 def distance(p1, p2):
-    d = 0
-    for i in range(4):
-        if p1.v[i] > p2.v[i]:
-            d += p1.v[i] - p2.v[i]
-        else:
-            d += p2.v[i] - p1.v[i]
-
-    return d
+    return sum(abs(a - b) for a, b in zip(p1.v, p2.v))
 
 class Sky(object):
-    def __init__(self):
+    def __init__(self, txt):
         self.points = []
-
-    def load(self, f):
-        i = 0
-        for line in f:
-            val = [int(x) for x in line.strip().split(",")]
+        for i, line in enumerate(txt.splitlines()):
+            val = tuple(map(int, line.strip().split(",")))
             self.points.append(Point(val, i))
-            i += 1
 
     def find(self, i):
         while self.points[i].parent != i:
@@ -37,7 +26,7 @@ class Sky(object):
 
         return i
 
-    def merge(self, i, j):
+    def union(self, i, j):
         i = self.find(i)
         j = self.find(j)
 
@@ -55,27 +44,26 @@ class Sky(object):
         for i in range(len(self.points)):
             for j in range(i):
                 if distance(self.points[i], self.points[j]) <= 3:
-                    self.merge(i, j)
+                    self.union(i, j)
 
         count = 0
-        for i in range(len(self.points)):
-            if self.points[i].parent == i:
+        for i, point in enumerate(self.points):
+            if point.parent == i:
                 count += 1
 
         return count
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: {} <filename>".format(sys.argv[0]), file = sys.stderr)
-        exit(-1)
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-    s = Sky()
     try:
         with open(sys.argv[1], "rt") as f:
-            s.load(f)
+            txt = f.read()
     except:
-        raise
-        print("Cannot open {} for reading".format(sys.argv[1]), file = sys.stderr)
-        exit(-1)
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
-    print("Constellation count: {}".format(s.count_constellations()))
+    s = Sky(txt)
+    print("Part1:", s.count_constellations())
